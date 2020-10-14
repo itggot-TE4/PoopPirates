@@ -2,7 +2,8 @@
 # TE4
 Template project for projects at TE4. 
 
-Replace this with a description for the project. Remember to update the above template badge.
+## Project description
+Teacher-O-Matic is a program where teachers can view, review and give feedback to students projects.
 
 ## Project management setup
 - Use projects tab for adding kanban boards for issue tracking and bug triage board.
