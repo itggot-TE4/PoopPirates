@@ -49,6 +49,7 @@ async function showForks(url){
         let codeJson = await codeResponse.json()
         let codeData = await JSON.parse(codeJson)
         let code = atob(codeData.content)
+        createForkCard(code);
     }
     // parsedResponse.forEach(repoData => {
     //     card = createRepoCard(repoData);
@@ -63,6 +64,13 @@ function createRepoCard(data){
     card.querySelector('.gitLink').href = data.html_url;
     card.querySelector('.forksCounter').appendChild(document.createTextNode(data.forks));
     return card;
+}
+
+function createForkCard(code) {
+    let card = document.querySelector('#templateFork').content.cloneNode(true).querySelector('.forkLayout');
+    card.querySelector(".sourceCode").innerText = `${code}`;
+    document.querySelector('.contentBox').innerHTML = ""
+    document.querySelector('.contentBox').appendChild(card);
 }
 
 onLoad();
