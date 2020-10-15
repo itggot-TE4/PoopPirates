@@ -8,7 +8,7 @@ async function searchRequest() {
     contentBox = document.querySelector('.contentBox')
     contentBox.innerHTML = ''
     const input = document.querySelector('#searchbar').value;
-    const response = await fetch(`/api/get/repos/${input}`);
+    const response = await fetch(`/api/get/repos/${input}`)
     jsonResponse = await response.json()
     parsedResponse = await JSON.parse(jsonResponse)
     parsedResponse.forEach(repoData => {
