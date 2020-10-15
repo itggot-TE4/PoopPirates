@@ -1,15 +1,17 @@
 function onLoad(){
-    const inputEventListener = document.querySelector('#searchbar');
-    inputEventListener.addEventListener('keyup', searchRequest);
+    const inputEventListener = document.querySelector('#search');
+    inputEventListener.addEventListener('click', searchRequest);
     
 }
 
 async function searchRequest() {
-    // const input = document.querySelector('#searchbar').value;
-    // const result = await fetch(`https://api.github.com/orgs/${input}/repos`);
     contentBox = document.querySelector('.contentBox')
     contentBox.innerHTML = ''
-    itggotRequest.forEach(repoData => {
+    const input = document.querySelector('#searchbar').value;
+    const response = await fetch(`/api/get/repos/${input}`);
+    jsonResponse = await response.json()
+    parsedResponse = await JSON.parse(jsonResponse)
+    parsedResponse.forEach(repoData => {
         card = createRepoCard(repoData);
         contentBox.appendChild(card)
     })

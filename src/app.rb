@@ -9,4 +9,8 @@ class Application < Sinatra::Base
         slim :index
     end
 
+    get '/api/get/repos/:input' do
+        result = HTTParty.get("https://api.github.com/users/#{params['input']}/repos").body
+        return result.to_json
+    end
 end
