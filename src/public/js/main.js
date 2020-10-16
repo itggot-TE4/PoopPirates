@@ -1,5 +1,5 @@
 function onLoad(){
-    const inputEventListener = document.querySelector('#search');
+    const inputEventListener = document.querySelector('#searchButton');
     inputEventListener.addEventListener('click', searchRequest);
     const contentBox = document.querySelector('.contentBox');
     contentBox.addEventListener('click', contentBoxEvents);
@@ -24,11 +24,13 @@ function clearErrorMessage(){
 
 async function searchRequest() {
     clearErrorMessage();
-    let input = document.querySelector('#searchbar').value;
+    let input = document.querySelector('#search').value;
     let repos = await sendRequest(`https://api.github.com/users/${input}/repos`);
 
     let contentBox = document.querySelector('.contentBox');
     contentBox.innerHTML = '';
+
+console.log(repos)
 
     repos.forEach(repo => {
         card = createRepoCard(repo);
@@ -67,8 +69,9 @@ async function showForks(url){
         };
 
         let code = atob(codeData.content);
-        let card = createForkCard(code);
+        let card = createForkCard(code, forkData.name);
         contentBox.appendChild(card);
+        console.log(forkData)
     }
 }
 
@@ -81,10 +84,11 @@ function createRepoCard(data){
     return card;
 }
 
-function createForkCard(code) {
+function createForkCard(code, name) {
     let card = document.querySelector('#templateFork').content.cloneNode(true).querySelector('.forkLayout');
     sourceCode = card.querySelector(".sourceCode");
     sourceCode.innerText = `${code}`;
+    card.querySelector(".forkName").innerText = name
     hljs.highlightBlock(sourceCode);
     return card;
 }

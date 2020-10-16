@@ -13,10 +13,11 @@ html lang="en"
 
         nav
             .nav-wrapper
-                form 
+                form onsubmit="return false"
                     div.input-field
                         / input#searchbar type="text"
                         input#search type="search" required
+                        button#searchButton search
                         label class="label-icon" for="search"
                             i.material-icons account_box
                             / img.material-icon src="profile_white.png" alt="" size="500px"/
@@ -42,12 +43,13 @@ html lang="en"
                                     span class="forksCounter right"
 
     template#templateFork
-        div class="forkLayout"
-            h2 class="repoName"
-            pre
-                code class="javascript"
-                    div class="sourceCode"
-            a.gitLink href="" Show on GitHub
+        div class="forkLayout card"
+            div class="card-content"
+                h2 class="forkName card-title"
+                pre
+                    code class="javascript"
+                        div class="sourceCode"
+                a.gitLink href="" Show on GitHub
     
     script src="js/main.js"
     script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/highlight.min.js"
