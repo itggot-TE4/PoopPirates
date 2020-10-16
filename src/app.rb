@@ -1,5 +1,3 @@
-require "base64"
-
 class Application < Sinatra::Base
 
     before do
@@ -20,9 +18,5 @@ class Application < Sinatra::Base
         result = HTTParty.get(params['url'], option).body
         p result
         return result.to_json
-    end
-
-    get '/test' do
-        p Base64.decode64("ZnVuY3Rpb24gc21hbGwoKXsNCiAgcmV0dXJuICJ0am8iOw0KfQ0K\n")
     end
 end
