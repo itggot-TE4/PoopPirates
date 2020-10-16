@@ -11,7 +11,7 @@ class Application < Sinatra::Base
 
     get '/api/send/request/?' do
         headers = {
-            'Authorization' => 'token 245f6ddc6b6b8d043640ae7fdbf89c14854ba468'
+            'Authorization' => 'token  0f6c7734ee844ed44cfcc571d34e81f651c7a61f'
         }
         result = HTTParty.get(params['url'], :headers => headers)
         p result

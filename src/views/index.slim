@@ -6,35 +6,51 @@ html lang="en"
         title Document
         link rel="stylesheet" href="css/style.css"/
         link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/atom-one-dark-reasonable.min.css"
+        link rel="stylesheet" href="css/materialize.min.css"/
+        link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/
 
     header
-        input#searchbar type="text"
-        button#search Search
+
+        nav
+            .nav-wrapper
+                form onsubmit="return false"
+                    div.input-field
+                        / input#searchbar type="text"
+                        input#search type="search" required
+                        button#searchButton search
+                        label class="label-icon" for="search"
+                            i.material-icons account_box
+                            / img.material-icon src="profile_white.png" alt="" size="500px"/
+                        / button#search Search
+                        i.material-icons close
 
     body
-        h2#error
-        .contentBox
-            h1 Welcome to Teacher-O-Matic!
-            p Enter your GitHub username in the header field
+        div.container
+            h2#error
+            div class="contentBox row"
+                h1 Welcome to Teacher-O-Matic!
+                p Enter your GitHub username in the header field
     
     template#templateRepo
-        div class="repoCard"
-            h2 class="repoName"
-            div
-                div
-                    a.forksLink dataAction="forkLink" href="#" Show Forks
-                    div
-                    a.gitLink href="#" Show on GitHub
-                p.forksCounter
-    
+                div class="repoCard col s4"
+                        div class="card"
+                            div class="card-stacked card-content"   
+                                span class="repoName card-title truncate"
+                                p
+                                    a.forksLink dataAction="forkLink" href="#" Show Forks 
+                                    span | 
+                                    a.gitLink href="#" Show on GitHub
+                                    span class="forksCounter right"
+
     template#templateFork
-        div class="forkLayout"
-            h2 class="repoName"
-            pre
-                code class="javascript"
-                    div class="sourceCode"
-            a.gitLink href="" Show on GitHub
+        div class="forkLayout card"
+            div class="card-content"
+                h2 class="forkName card-title"
+                pre
+                    code class="javascript"
+                        div class="sourceCode"
+                a.gitLink href="" Show on GitHub
     
     script src="js/main.js"
     script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/highlight.min.js"
-   
+    script src="js/materialize.min.js"
