@@ -29,7 +29,7 @@ async function searchRequest() {
     let reposJson = await reposResponse.json();
     let repos = await JSON.parse(reposJson);
  
-    if(repos['message'].includes('API rate limit exceeded')){
+    if(typeof repos['message'] == String && repos['message'].includes('API rate limit exceeded')){
         errorMessage('API limit exeeded, please try again later.');
         return;
     }
@@ -43,13 +43,18 @@ async function searchRequest() {
 }
 
 async function showForks(url){
-    // clearErrorMessage()
-    // let contentBox = document.querySelector('.contentBox')
-    // contentBox.innerHTML = ''
-    
+    clearErrorMessage()
     let forksResponse = await fetch(`/api/send/request?url=${url}`);
     let forksJson = await forksResponse.json();
     let forksData = await JSON.parse(forksJson);
+
+    if(forksData.length == 0){
+        errorMessage('This repository has no forks');
+        return;
+    }
+
+    let contentBox = document.querySelector('.contentBox');
+    contentBox.innerHTML = '';
     for(forkData of forksData){
         manifestUrl = forkData.url + '/contents/.manifest.json';
         let manifestResponse = await fetch(`/api/send/request?url=${manifestUrl}`);
@@ -66,13 +71,16 @@ async function showForks(url){
         let codeResponse = await fetch(`/api/send/request?url=${codeFile}`);
         let codeJson = await codeResponse.json();
         let codeData = await JSON.parse(codeJson);
+
+        if(codeData.message == 'Not Found'){
+            errorMessage(`Cannot show some forks for ${forkData.name}`);
+            continue;
+        };
+
         let code = atob(codeData.content);
-        createForkCard(code);
+        let card = createForkCard(code);
+        contentBox.appendChild(card);
     }
-    // parsedResponse.forEach(repoData => {
-    //     card = createRepoCard(repoData);
-    //     contentBox.appendChild(card)
-    // })
 }
 
 function createRepoCard(data){
@@ -87,8 +95,7 @@ function createRepoCard(data){
 function createForkCard(code) {
     let card = document.querySelector('#templateFork').content.cloneNode(true).querySelector('.forkLayout');
     card.querySelector(".sourceCode").innerText = `${code}`;
-    document.querySelector('.contentBox').innerHTML = ""
-    document.querySelector('.contentBox').appendChild(card);
+    return card;
 }
 
 onLoad();
