@@ -48,7 +48,7 @@ async function showForks (url) {
     return
   }
 
-  let cards = []
+  const cards = []
 
   for (const forkData of forksData) {
     const manifestUrl = forkData.url + '/contents/.manifest.json'
