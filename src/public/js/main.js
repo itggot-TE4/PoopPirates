@@ -23,16 +23,10 @@ function clearErrorMessage(){
 }
 
 async function searchRequest() {
-    clearErrorMessage()
+    clearErrorMessage();
     let input = document.querySelector('#searchbar').value;
-    let reposResponse = await fetch(`/api/send/request?url=https://api.github.com/users/${input}/repos`);
-    let reposJson = await reposResponse.json();
-    let repos = await JSON.parse(reposJson);
- 
-    if(typeof repos['message'] == String && repos['message'].includes('API rate limit exceeded')){
-        errorMessage('API limit exeeded, please try again later.');
-        return;
-    }
+    let repos = await sendRequest(`https://api.github.com/users/${input}/repos`);
+
     let contentBox = document.querySelector('.contentBox');
     contentBox.innerHTML = '';
 
@@ -43,10 +37,9 @@ async function searchRequest() {
 }
 
 async function showForks(url){
-    clearErrorMessage()
-    let forksResponse = await fetch(`/api/send/request?url=${url}`);
-    let forksJson = await forksResponse.json();
-    let forksData = await JSON.parse(forksJson);
+    clearErrorMessage();
+
+    let forksData = await sendRequest(url);
 
     if(forksData.length == 0){
         errorMessage('This repository has no forks');
@@ -56,10 +49,8 @@ async function showForks(url){
     let contentBox = document.querySelector('.contentBox');
     contentBox.innerHTML = '';
     for(forkData of forksData){
-        manifestUrl = forkData.url + '/contents/.manifest.json';
-        let manifestResponse = await fetch(`/api/send/request?url=${manifestUrl}`);
-        let manifestJson = await manifestResponse.json();
-        let manifestData = await JSON.parse(manifestJson);
+        let manifestUrl = forkData.url + '/contents/.manifest.json';
+        let manifestData = await sendRequest(manifestUrl);
         
         if(manifestData.message == 'Not Found'){
             errorMessage(`Cannot show some forks for ${forkData.name}`);
@@ -67,11 +58,9 @@ async function showForks(url){
         };
         
         let content = await JSON.parse(atob(manifestData.content));
-        let codeFile = forkData.url + '/contents/' + content.filePath;
-        let codeResponse = await fetch(`/api/send/request?url=${codeFile}`);
-        let codeJson = await codeResponse.json();
-        let codeData = await JSON.parse(codeJson);
-
+        let codeFileUrl = forkData.url + '/contents/' + content.filePath;
+        let codeData =  await sendRequest(codeFileUrl);
+        
         if(codeData.message == 'Not Found'){
             errorMessage(`Cannot show some forks for ${forkData.name}`);
             continue;
@@ -96,6 +85,21 @@ function createForkCard(code) {
     let card = document.querySelector('#templateFork').content.cloneNode(true).querySelector('.forkLayout');
     card.querySelector(".sourceCode").innerText = `${code}`;
     return card;
+}
+
+async function sendRequest(url){
+    let response = await fetch(url);
+    let jsonResponse = await response.json();
+
+    if(typeof jsonResponse['message'] === 'string'){
+        if(jsonResponse['message'].includes('API rate limit exceeded')){
+            errorMessage('API limit exeeded, please try again later.');
+        }
+    }
+
+    console.log(jsonResponse)
+
+    return jsonResponse
 }
 
 onLoad();
