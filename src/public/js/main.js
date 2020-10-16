@@ -1,117 +1,115 @@
-function onLoad(){
-    const inputEventListener = document.querySelector('#searchButton');
-    inputEventListener.addEventListener('click', searchRequest);
-    const contentBox = document.querySelector('.contentBox');
-    contentBox.addEventListener('click', contentBoxEvents);
+function onLoad () {
+  const inputEventListener = document.querySelector('#searchButton')
+  inputEventListener.addEventListener('click', searchRequest)
+  const contentBox = document.querySelector('.contentBox')
+  contentBox.addEventListener('click', contentBoxEvents)
 }
 
-function contentBoxEvents(e){
-    e.preventDefault();
-    if (e.target.getAttribute('dataAction') == 'forkLink'){
-        showForks(e.target.getAttribute('forksLink'));
+function contentBoxEvents (e) {
+  e.preventDefault()
+  if (e.target.getAttribute('dataAction') === 'forkLink') {
+    showForks(e.target.getAttribute('forksLink'))
+  }
+}
+
+function errorMessage (msg) {
+  const errorDiv = document.querySelector('#error')
+  errorDiv.innerHTML = ''
+  errorDiv.appendChild(document.createTextNode(msg))
+}
+
+function clearErrorMessage () {
+  document.querySelector('#error').innerHTML = ''
+}
+
+async function searchRequest () {
+  clearErrorMessage()
+  const input = document.querySelector('#search').value
+  const repos = await sendRequest(`https://api.github.com/users/${input}/repos`)
+
+  const contentBox = document.querySelector('.contentBox')
+  contentBox.innerHTML = ''
+
+  console.log(repos)
+
+  repos.forEach(repo => {
+    const card = createRepoCard(repo)
+    contentBox.appendChild(card)
+  })
+}
+
+async function showForks (url) {
+  clearErrorMessage()
+
+  const forksData = await sendRequest(url)
+
+  if (forksData.length === 0) {
+    errorMessage('This repository has no forks')
+    return
+  }
+
+  const contentBox = document.querySelector('.contentBox')
+  contentBox.innerHTML = ''
+  for (const forkData of forksData) {
+    const manifestUrl = forkData.url + '/contents/.manifest.json'
+    const manifestData = await sendRequest(manifestUrl)
+
+    if (manifestData.message === 'Not Found') {
+      errorMessage(`Cannot show some forks for ${forkData.name}`)
+      continue
+    };
+
+    const content = await JSON.parse(atob(manifestData.content))
+    const codeFileUrl = forkData.url + '/contents/' + content.filePath
+    const codeData = await sendRequest(codeFileUrl)
+
+    if (codeData.message === 'Not Found') {
+      errorMessage(`Cannot show some forks for ${forkData.name}`)
+      continue
+    };
+
+    const code = atob(codeData.content)
+    const card = createForkCard(code, forkData.name)
+    contentBox.appendChild(card)
+    console.log(forkData)
+  }
+}
+
+function createRepoCard (data) {
+  const card = document.querySelector('#templateRepo').content.cloneNode(true).querySelector('.repoCard')
+  card.querySelector('.repoName').appendChild(document.createTextNode(data.name))
+  card.querySelector('.forksLink').setAttribute('forksLink', data.forks_url)
+  card.querySelector('.gitLink').href = data.html_url
+  card.querySelector('.forksCounter').appendChild(document.createTextNode(data.forks))
+  return card
+}
+
+function createForkCard (code, name) {
+  const card = document.querySelector('#templateFork').content.cloneNode(true).querySelector('.forkLayout')
+  const sourceCode = card.querySelector('.sourceCode')
+  sourceCode.innerText = `${code}`
+  card.querySelector('.forkName').innerText = name
+  // eslint-disable-next-line no-undef
+  hljs.highlightBlock(sourceCode)
+  return card
+}
+
+async function sendRequest (url) {
+  const response = await fetch(url)
+  const jsonResponse = await response.json()
+
+  if (typeof jsonResponse.message === 'string') {
+    if (jsonResponse.message.includes('API rate limit exceeded')) {
+      errorMessage('API limit exeeded, please try again later.')
     }
+  }
+
+  console.log(jsonResponse)
+
+  return jsonResponse
 }
 
-function errorMessage(msg){
-    errorDiv = document.querySelector('#error');
-    errorDiv.innerHTML = '';
-    errorDiv.appendChild(document.createTextNode(msg));
-}
-
-function clearErrorMessage(){
-    document.querySelector('#error').innerHTML = '';
-}
-
-async function searchRequest() {
-    clearErrorMessage();
-    let input = document.querySelector('#search').value;
-    let repos = await sendRequest(`https://api.github.com/users/${input}/repos`);
-
-    let contentBox = document.querySelector('.contentBox');
-    contentBox.innerHTML = '';
-
-console.log(repos)
-
-    repos.forEach(repo => {
-        card = createRepoCard(repo);
-        contentBox.appendChild(card);
-    });
-}
-
-async function showForks(url){
-    clearErrorMessage();
-
-    let forksData = await sendRequest(url);
-
-    if(forksData.length == 0){
-        errorMessage('This repository has no forks');
-        return;
-    }
-
-    let contentBox = document.querySelector('.contentBox');
-    contentBox.innerHTML = '';
-    for(forkData of forksData){
-        let manifestUrl = forkData.url + '/contents/.manifest.json';
-        let manifestData = await sendRequest(manifestUrl);
-        
-        if(manifestData.message == 'Not Found'){
-            errorMessage(`Cannot show some forks for ${forkData.name}`);
-            continue;
-        };
-        
-        let content = await JSON.parse(atob(manifestData.content));
-        let codeFileUrl = forkData.url + '/contents/' + content.filePath;
-        let codeData =  await sendRequest(codeFileUrl);
-        
-        if(codeData.message == 'Not Found'){
-            errorMessage(`Cannot show some forks for ${forkData.name}`);
-            continue;
-        };
-
-        let code = atob(codeData.content);
-        let card = createForkCard(code, forkData.name);
-        contentBox.appendChild(card);
-        console.log(forkData)
-    }
-}
-
-function createRepoCard(data){
-    let card = document.querySelector('#templateRepo').content.cloneNode(true).querySelector('.repoCard');
-    card.querySelector('.repoName').appendChild(document.createTextNode(data.name));
-    card.querySelector('.forksLink').setAttribute('forksLink', data.forks_url);
-    card.querySelector('.gitLink').href = data.html_url;
-    card.querySelector('.forksCounter').appendChild(document.createTextNode(data.forks));
-    return card;
-}
-
-function createForkCard(code, name) {
-    let card = document.querySelector('#templateFork').content.cloneNode(true).querySelector('.forkLayout');
-    sourceCode = card.querySelector(".sourceCode");
-    sourceCode.innerText = `${code}`;
-    card.querySelector(".forkName").innerText = name
-    hljs.highlightBlock(sourceCode);
-    return card;
-}
-
-async function sendRequest(url){
-    let response = await fetch(url);
-    let jsonResponse = await response.json();
-
-    if(typeof jsonResponse['message'] === 'string'){
-        if(jsonResponse['message'].includes('API rate limit exceeded')){
-            errorMessage('API limit exeeded, please try again later.');
-        }
-    }
-
-    console.log(jsonResponse)
-
-    return jsonResponse
-}
-
-onLoad();
-
-
-
+onLoad()
 
 // In case of emergency, use these
 // repos = [
