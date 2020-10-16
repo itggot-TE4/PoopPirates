@@ -10,12 +10,10 @@ class Application < Sinatra::Base
     end
 
     get '/api/send/request/?' do
-        auth = {
-            username: 'te4-jonathan-ronsten',
-            authorization: 'dc999fc3243646e68dad87842d5edb5c182a0a5a'
+        headers = {
+            'Authorization' => 'token 245f6ddc6b6b8d043640ae7fdbf89c14854ba468'
         }
-        option = {basic_auth: auth}
-        result = HTTParty.get(params['url'], option).body
+        result = HTTParty.get(params['url'], :headers => headers)
         p result
         return result.to_json
     end
