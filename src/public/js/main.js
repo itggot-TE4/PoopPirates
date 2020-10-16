@@ -48,8 +48,8 @@ async function showForks (url) {
     return
   }
 
-  const contentBox = document.querySelector('.contentBox')
-  contentBox.innerHTML = ''
+  const cards = []
+
   for (const forkData of forksData) {
     const manifestUrl = forkData.url + '/contents/.manifest.json'
     const manifestData = await sendRequest(manifestUrl)
@@ -70,9 +70,20 @@ async function showForks (url) {
 
     const code = atob(codeData.content)
     const card = createForkCard(code, forkData.name)
-    contentBox.appendChild(card)
-    console.log(forkData)
+    cards.push(card)
   }
+
+  if (cards.length === 0) {
+    errorMessage('This repository has no viewable forks')
+    return
+  }
+
+  const contentBox = document.querySelector('.contentBox')
+  contentBox.innerHTML = ''
+
+  cards.forEach(card => {
+    contentBox.appendChild(card)
+  })
 }
 
 function createRepoCard (data) {
