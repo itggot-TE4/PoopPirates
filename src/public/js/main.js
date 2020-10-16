@@ -23,12 +23,16 @@ function clearErrorMessage(){
 }
 
 async function searchRequest() {
+    clearErrorMessage()
     let input = document.querySelector('#searchbar').value;
     let reposResponse = await fetch(`/api/send/request?url=https://api.github.com/users/${input}/repos`);
     let reposJson = await reposResponse.json();
     let repos = await JSON.parse(reposJson);
-
-    clearErrorMessage()
+ 
+    if(repos['message'].includes('API rate limit exceeded')){
+        errorMessage('API limit exeeded, please try again later.');
+        return;
+    }
     let contentBox = document.querySelector('.contentBox');
     contentBox.innerHTML = '';
 
