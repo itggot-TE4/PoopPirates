@@ -28,7 +28,7 @@ async function searchRequest() {
     let reposResponse = await fetch(`/api/send/request?url=https://api.github.com/users/${input}/repos`);
     let reposJson = await reposResponse.json();
     let repos = await JSON.parse(reposJson);
-    console.log(repos)
+ 
     if(repos['message'].includes('API rate limit exceeded')){
         errorMessage('API limit exeeded, please try again later.');
         return;
