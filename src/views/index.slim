@@ -5,6 +5,7 @@ html lang="en"
         meta name="viewport" content="width=device-width, initial-scale=1.0"/
         title Document
         link rel="stylesheet" href="css/style.css"/
+        link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/atom-one-dark-reasonable.min.css"
 
     header
         input#searchbar type="text"
@@ -29,8 +30,11 @@ html lang="en"
     template#templateFork
         div class="forkLayout"
             h2 class="repoName"
-            div class="sourceCode"
+            pre
+                code class="javascript"
+                    div class="sourceCode"
             a.gitLink href="" Show on GitHub
-        
     
     script src="js/main.js"
+    script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/highlight.min.js"
+   

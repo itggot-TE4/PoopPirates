@@ -83,7 +83,9 @@ function createRepoCard(data){
 
 function createForkCard(code) {
     let card = document.querySelector('#templateFork').content.cloneNode(true).querySelector('.forkLayout');
-    card.querySelector(".sourceCode").innerText = `${code}`;
+    sourceCode = card.querySelector(".sourceCode");
+    sourceCode.innerText = `${code}`;
+    hljs.highlightBlock(sourceCode);
     return card;
 }
 
@@ -103,6 +105,9 @@ async function sendRequest(url){
 }
 
 onLoad();
+
+
+
 
 // In case of emergency, use these
 // repos = [
