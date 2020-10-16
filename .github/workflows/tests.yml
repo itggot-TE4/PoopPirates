@@ -23,6 +23,6 @@ jobs:
     - name: Check for linting
       run: |
         echo Run lint
-        # npm install
-        # npm run lint
+        npm install
+        npm run lint
 

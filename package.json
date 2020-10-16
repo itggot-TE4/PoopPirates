@@ -1,0 +1,30 @@
+{
+  "name": "pooppirates",
+  "version": "1.0.0",
+  "description": "[![Actions Status](https://github.com/itggot-TE4/TE4/workflows/tests/badge.svg)](https://github.com/itggot-TE4/Yala/actions) # TE4 Template project for projects at TE4.",
+  "main": "index.js",
+  "dependencies": {
+    "highlight.js": "^10.2.1"
+  },
+  "devDependencies": {
+    "eslint": "^7.11.0",
+    "eslint-config-standard": "^14.1.1",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/itggot-TE4/PoopPirates.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/itggot-TE4/PoopPirates/issues"
+  },
+  "homepage": "https://github.com/itggot-TE4/PoopPirates#readme"
+}
