@@ -69,7 +69,7 @@ async function showForks (url) {
     };
 
     const code = atob(codeData.content)
-    const card = createForkCard(code, forkData.name)
+    const card = createForkCard(code, forkData.full_name)
     cards.push(card)
   }
 
