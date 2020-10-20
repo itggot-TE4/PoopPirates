@@ -10,7 +10,7 @@ function contentBoxEvents (e) {
   if (e.target.getAttribute('dataAction') === 'forkLink') {
     showForks(e.target.getAttribute('forksLink'))
   } else if (e.target.getAttribute('dataAction') === 'commentSubmit') {
-    addComment(e.target)
+    addComment(e.target.parentElement)
   } else if (e.target.getAttribute('dataAction') === 'commentDelete') {
     deleteComment(e.target.parentElement)
   }
@@ -124,36 +124,43 @@ async function sendRequest (url) {
   return jsonResponse
 }
 
-async function addComment (forkDiv) {
+async function addComment (commentForm) {
   const comment = {}
-  comment.text = forkDiv.querySelector('commentText').value
-  comment.sender = forkDiv.querySelector('senderName').value
-  comment.projectId = forkDiv.getAttribute('projectId')
+  comment.text = commentForm.querySelector('.commentText').value
+  comment.sender = commentForm.querySelector('.senderName').value
+  comment.projectId = commentForm.getAttribute('projectId')
 
-  await fetch(`localhost:9292/api/comments/add?text=${comment.text}&sender=${comment.sender}&projectId=${comment.projectId}`)
+  await fetch(`http://localhost:9292/api/comments/add?text=${comment.text}&sender=${comment.sender}&projectId=${comment.projectId}`, {
+    method: 'POST'
+  })
 
-  const commentCard = createCommentCard(comment)
-  forkDiv.querySelector('.commentField').appendChild(commentCard)
+  const commentCard = await createCommentCard(comment)
+  console.log(commentCard)
+  console.log(typeof commentCard)
+  console.log(typeof commentForm.nextElementSibling)
+  commentForm.nextElementSibling.appendChild(commentCard)
 }
 
 async function deleteComment (commentDiv) {
   const id = commentDiv.getAttribute('dataId')
 
-  await fetch(`localhost:9292/api/comments/delete?id=${id}`)
+  await fetch(`http://localhost:9292/api/comments/delete?id=${id}`, {
+    method: 'DELETE'
+  })
 
   commentDiv.parentNode.removeChild(commentDiv)
 }
 
 async function getComments (projectId) {
-  return await sendRequest(`localhost:9292/api/comments/get?projectId=${projectId}`)
+  return await sendRequest(`http://localhost:9292/api/comments/get?projectId=${projectId}`)
 }
 
 async function createCommentCard (comment) {
-    const commentDiv = document.querySelector('#templateComment').content.cloneNode(true).querySelector('.comment')
-    commentDiv.querySelector('.commentText').appendChild(document.createTextNode(comment.text)) 
-    commentDiv.querySelector('.commentSender').appendChild(document.createTextNode(comment.sender))
-    commentDiv.setAttribute('dataId', comment.id)
-    return commentDiv 
+  const commentDiv = document.querySelector('#templateComment').content.cloneNode(true).querySelector('.comment')
+  commentDiv.querySelector('.commentText').appendChild(document.createTextNode(comment.text))
+  commentDiv.querySelector('.commentSender').appendChild(document.createTextNode(comment.sender))
+  commentDiv.setAttribute('dataId', comment.id)
+  return commentDiv
 }
 
 onLoad()
