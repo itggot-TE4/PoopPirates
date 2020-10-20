@@ -5,3 +5,23 @@
 .input-field-label {
     pointer-events: none;
 }
+
+.nameAndDelete {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.comment{
+    border-top: 1px rgb(150, 150, 150) solid;
+    margin-top: 1rem;
+}
+
+.comment i{
+    color: rgb(150, 150, 150);
+}
+
+.comment i:hover{
+    color: rgb(50, 50, 50);
+    background-color: rgba(0, 0, 0, 0.1);
+} 

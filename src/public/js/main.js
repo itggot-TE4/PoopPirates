@@ -12,7 +12,7 @@ function contentBoxEvents (e) {
   } else if (e.target.getAttribute('dataAction') === 'commentSubmit') {
     addComment(e.target.parentElement.parentElement.parentElement)
   } else if (e.target.getAttribute('dataAction') === 'commentDelete') {
-    deleteComment(e.target.parentElement)
+    deleteComment(e.target.parentElement.parentElement)
   }
 }
 
