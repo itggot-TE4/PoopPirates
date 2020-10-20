@@ -9,6 +9,10 @@ function contentBoxEvents (e) {
   e.preventDefault()
   if (e.target.getAttribute('dataAction') === 'forkLink') {
     showForks(e.target.getAttribute('forksLink'))
+  } else if (e.target.getAttribute('dataAction') === 'commentSubmit') {
+    addComment(e.target)
+  } else if (e.target.getAttribute('dataAction') === 'commentDelete') {
+    deleteComment(e.target.parentElement)
   }
 }
 
@@ -118,6 +122,30 @@ async function sendRequest (url) {
   console.log(jsonResponse)
 
   return jsonResponse
+}
+
+async function addComment (forkDiv) {
+  const comment = {}
+  comment.text = forkDiv.querySelector('commentText').value
+  comment.sender = forkDiv.querySelector('senderName').value
+  comment.projectId = forkDiv.getAttribute('projectId')
+
+  await fetch(`localhost:9292/api/comments/add?text=${comment.text}&sender=${comment.sender}&projectId=${comment.projectId}`)
+
+  const commentCard = createCommentCard(comment)
+  forkDiv.querySelector('.commentField').appendChild(commentCard)
+}
+
+async function deleteComment (commentDiv) {
+  const id = commentDiv.getAttribute('dataId')
+
+  await fetch(`localhost:9292/api/comments/delete?id=${id}`)
+
+  commentDiv.parentNode.removeChild(commentDiv)
+}
+
+async function getComments (projectId) {
+  return await sendRequest(`localhost:9292/api/comments/get?projectId=${projectId}`)
 }
 
 onLoad()
