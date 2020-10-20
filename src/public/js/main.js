@@ -148,6 +148,14 @@ async function getComments (projectId) {
   return await sendRequest(`localhost:9292/api/comments/get?projectId=${projectId}`)
 }
 
+async function createCommentCard (comment) {
+    const commentDiv = document.querySelector('#templateComment').content.cloneNode(true).querySelector('.comment')
+    commentDiv.querySelector('.commentText').appendChild(document.createTextNode(comment.text)) 
+    commentDiv.querySelector('.commentSender').appendChild(document.createTextNode(comment.sender))
+    commentDiv.setAttribute('dataId', comment.id)
+    return commentDiv 
+}
+
 onLoad()
 
 // In case of emergency, use these
