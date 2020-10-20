@@ -32,15 +32,16 @@ class Application < Sinatra::Base
         SQLQuery.new.del('comments').where.if('id', params['id']).send
     end
 
-    get '/api/fork/status/?' do
+    get '/api/forks/status/?' do
+        p params['projectId']
         return SQLQuery.new.get('status', ['status']).where.if('projectId', params['projectId']).send.first.to_json
     end
 
-    post '/api/fork/status/?' do
-        SQLQuery.new.add('status', ['status', 'projectId'], [params['status'], params['projectId']]).send
+    post '/api/forks/status/?' do
+        SQLQuery.new.add('status', ['projectId'], [params['projectId']]).send
     end
 
-    patch '/api/fork/status/?' do
-        SQLQuery.new.update('status', ['status'], ['status']).where.if('projectId', params['projectId']).send
+    patch '/api/forks/status/?' do
+        SQLQuery.new.update('status', ['status'], [params['status']]).where.if('projectId', params['projectId']).send
     end
 end
