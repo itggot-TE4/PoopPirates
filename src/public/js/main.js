@@ -115,7 +115,7 @@ async function createForkCard (code, forkData) {
   let status = await getStatus(forkData.id)
   if (status === null) {
     addStatus(forkData.id)
-    status = {status: 0}
+    status = { status: 0 }
   }
 
   card.querySelector('.status').selectedIndex = `${status.status}`
@@ -141,7 +141,6 @@ async function sendRequest (url) {
     }
   }
 
-
   return jsonResponse
 }
 
@@ -154,9 +153,9 @@ async function addComment (forkDiv) {
   comment.text = forkDiv.querySelector('.commentText').value
   comment.sender = forkDiv.querySelector('.senderName').value
   comment.projectId = forkDiv.getAttribute('dataId')
-  
-  await fetch(`http://localhost:9292/api/comments/add?text=${comment.text}&sender=${comment.sender}&projectId=${comment.projectId}`, {method: 'POST'})
-  
+
+  await fetch(`http://localhost:9292/api/comments/add?text=${comment.text}&sender=${comment.sender}&projectId=${comment.projectId}`, { method: 'POST' })
+
   forkDiv.querySelector('.commentText').value = ''
   forkDiv.querySelector('.senderName').value = ''
   const commentCard = await createCommentCard(comment)
@@ -169,7 +168,7 @@ async function addComment (forkDiv) {
 async function deleteComment (commentDiv) {
   const id = commentDiv.getAttribute('dataId')
 
-  await fetch(`http://localhost:9292/api/comments/delete?id=${id}`, {method: 'DELETE'})
+  await fetch(`http://localhost:9292/api/comments/delete?id=${id}`, { method: 'DELETE' })
 
   commentDiv.parentNode.removeChild(commentDiv)
 }
@@ -179,11 +178,11 @@ async function getStatus (projectId) {
 }
 
 async function addStatus (projectId) {
-  await fetch(`http://localhost:9292/api/forks/status?projectId=${projectId}`, {method: 'POST'})
+  await fetch(`http://localhost:9292/api/forks/status?projectId=${projectId}`, { method: 'POST' })
 }
 
 async function updateStatus (projectId, status) {
-  await fetch(`http://localhost:9292/api/forks/status?projectId=${projectId}&status=${status}`, {method: 'PATCH'})
+  await fetch(`http://localhost:9292/api/forks/status?projectId=${projectId}&status=${status}`, { method: 'PATCH' })
 }
 
 onLoad()
