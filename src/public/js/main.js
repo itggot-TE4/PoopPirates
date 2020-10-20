@@ -10,7 +10,7 @@ function contentBoxEvents (e) {
   if (e.target.getAttribute('dataAction') === 'forkLink') {
     showForks(e.target.getAttribute('forksLink'))
   } else if (e.target.getAttribute('dataAction') === 'commentSubmit') {
-    addComment(e.target.parentElement)
+    addComment(e.target.parentElement.parentElement.parentElement)
   } else if (e.target.getAttribute('dataAction') === 'commentDelete') {
     deleteComment(e.target.parentElement)
   }
@@ -73,7 +73,7 @@ async function showForks (url) {
     };
 
     const code = atob(codeData.content)
-    const card = createForkCard(code, forkData.full_name)
+    const card = await createForkCard(code, forkData)
     cards.push(card)
   }
 
@@ -99,14 +99,31 @@ function createRepoCard (data) {
   return card
 }
 
-function createForkCard (code, name) {
+async function createForkCard (code, forkData) {
   const card = document.querySelector('#templateFork').content.cloneNode(true).querySelector('.forkLayout')
+  card.setAttribute('dataId', forkData.id)
   const sourceCode = card.querySelector('.sourceCode')
   sourceCode.innerText = `${code}`
-  card.querySelector('.forkName').innerText = name
+  card.querySelector('.forkName').innerText = forkData.full_name
   // eslint-disable-next-line no-undef
   hljs.highlightBlock(sourceCode)
+
+  const comments = await getComments(forkData.id)
+  console.log(comments)
+  comments.forEach(comment => {
+    const commentCard = createCommentCard(comment)
+    card.querySelector('.commentField').appendChild(commentCard)
+  })
+
   return card
+}
+
+function createCommentCard (comment) {
+  const commentDiv = document.querySelector('#templateComment').content.cloneNode(true).querySelector('.comment')
+  commentDiv.querySelector('.commentText').appendChild(document.createTextNode(comment.text))
+  commentDiv.querySelector('.commentSender').appendChild(document.createTextNode(comment.sender))
+  commentDiv.setAttribute('dataId', comment.id)
+  return commentDiv
 }
 
 async function sendRequest (url) {
@@ -124,21 +141,18 @@ async function sendRequest (url) {
   return jsonResponse
 }
 
-async function addComment (commentForm) {
+async function addComment (forkDiv) {
   const comment = {}
-  comment.text = commentForm.querySelector('.commentText').value
-  comment.sender = commentForm.querySelector('.senderName').value
-  comment.projectId = commentForm.getAttribute('projectId')
+  comment.text = forkDiv.querySelector('.commentText').value
+  comment.sender = forkDiv.querySelector('.senderName').value
+  comment.projectId = forkDiv.getAttribute('dataId')
 
   await fetch(`http://localhost:9292/api/comments/add?text=${comment.text}&sender=${comment.sender}&projectId=${comment.projectId}`, {
     method: 'POST'
   })
 
   const commentCard = await createCommentCard(comment)
-  console.log(commentCard)
-  console.log(typeof commentCard)
-  console.log(typeof commentForm.nextElementSibling)
-  commentForm.nextElementSibling.appendChild(commentCard)
+  forkDiv.querySelector('.commentField').appendChild(commentCard)
 }
 
 async function deleteComment (commentDiv) {
@@ -153,14 +167,6 @@ async function deleteComment (commentDiv) {
 
 async function getComments (projectId) {
   return await sendRequest(`http://localhost:9292/api/comments/get?projectId=${projectId}`)
-}
-
-async function createCommentCard (comment) {
-  const commentDiv = document.querySelector('#templateComment').content.cloneNode(true).querySelector('.comment')
-  commentDiv.querySelector('.commentText').appendChild(document.createTextNode(comment.text))
-  commentDiv.querySelector('.commentSender').appendChild(document.createTextNode(comment.sender))
-  commentDiv.setAttribute('dataId', comment.id)
-  return commentDiv
 }
 
 onLoad()
