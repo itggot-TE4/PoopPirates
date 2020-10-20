@@ -31,4 +31,17 @@ class Application < Sinatra::Base
     delete '/api/comments/delete/?' do
         SQLQuery.new.del('comments').where.if('id', params['id']).send
     end
+
+    get '/api/forks/status/?' do
+        p params['projectId']
+        return SQLQuery.new.get('status', ['status']).where.if('projectId', params['projectId']).send.first.to_json
+    end
+
+    post '/api/forks/status/?' do
+        SQLQuery.new.add('status', ['projectId'], [params['projectId']]).send
+    end
+
+    patch '/api/forks/status/?' do
+        SQLQuery.new.update('status', ['status'], [params['status']]).where.if('projectId', params['projectId']).send
+    end
 end
