@@ -13,6 +13,8 @@ function contentBoxEvents (e) {
     addComment(e.target.parentElement.parentElement.parentElement)
   } else if (e.target.getAttribute('dataAction') === 'commentDelete') {
     deleteComment(e.target.parentElement.parentElement)
+  } else if (e.target.getAttribute('dataAction') === 'status'){
+    console.log('hej')
   }
 }
 

@@ -30,16 +30,8 @@ html lang="en"
             div class="contentBox row"
                 h1 Welcome to Teacher-O-Matic!
                 p Enter your GitHub username in the header field
-            
-
-                        div class="comment"
-                            p class="commentText" jo men det var väl lite coolt
-                            div class="nameAndDelete"
-                                b class="commentSender" bojk
-                                i class="material-icons" dataAction="commentDelete" delete
 
                 
-    
     template#templateRepo
                 div class="repoCard col s4"
                         div class="card"
@@ -61,6 +53,12 @@ html lang="en"
                 a.gitLink href="" Show on GitHub
             
             div class="card-action"
+                .input-field
+                    select style="display:block;"
+                        option value="1" selected="" Ej bedömd
+                        option value="2"  Årgärd krävs
+                        option value="3"  Ej bedömd
+
                 form action=""
                     div class="input-field row"
                             input class="commentText validate" type="text"
