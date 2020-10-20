@@ -146,11 +146,13 @@ async function addComment (forkDiv) {
   comment.text = forkDiv.querySelector('.commentText').value
   comment.sender = forkDiv.querySelector('.senderName').value
   comment.projectId = forkDiv.getAttribute('dataId')
-
+  
   await fetch(`http://localhost:9292/api/comments/add?text=${comment.text}&sender=${comment.sender}&projectId=${comment.projectId}`, {
     method: 'POST'
   })
-
+  
+  forkDiv.querySelector('.commentText').value = ''
+  forkDiv.querySelector('.senderName').value = ''
   const commentCard = await createCommentCard(comment)
   forkDiv.querySelector('.commentField').appendChild(commentCard)
 }
